@@ -56,7 +56,7 @@
         }
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
-    so.observe(document.getElementById('top'));
+    if (document.getElementById('top')) so.observe(document.getElementById('top'));
     Object.keys(map).forEach(function (id) {
       var s = document.getElementById(id);
       if (s) so.observe(s);
@@ -128,7 +128,9 @@
   /* contact form: validation and pre-filled mailto */
   var TO = 'dworekemilii@onet.eu';
   var form = document.getElementById('inquiry');
+  if (!form) return;
   var msg = form.querySelector('.form-msg');
+  form.querySelectorAll('.field').forEach(function(field, index) { var input=field.querySelector('input,select,textarea'), err=field.querySelector('.err'); if(input && err){ err.id='field-error-'+index; input.setAttribute('aria-describedby',err.id); } });
 
   function val(name) { return (form.elements[name].value || '').trim(); }
   function setErr(name, text) {
@@ -148,7 +150,10 @@
     var checks = [
       ['name', val('name').length < 2 ? 'Podaj imię i nazwisko.' : ''],
       ['email', !email ? 'Podaj adres e-mail, na który mamy odpisać.' : (/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) ? '' : 'Ten adres e-mail wygląda na niepełny.')],
-      ['kind', val('kind') ? '' : 'Wybierz, czego dotyczy zapytanie.']
+      ['kind', val('kind') ? '' : 'Wybierz, czego dotyczy zapytanie.'],
+      ['phone', /^[+()\d\s-]{6,25}$/.test(val('phone')) ? '' : 'Podaj numer telefonu.'],
+      ['from', val('from') ? '' : 'Wybierz datę przyjazdu lub przyjęcia.'],
+      ['guests', Number.isInteger(Number(val('guests'))) && Number(val('guests')) > 0 ? '' : 'Podaj liczbę osób, co najmniej 1.']
     ];
     checks.forEach(function (c) {
       setErr(c[0], c[1]);
